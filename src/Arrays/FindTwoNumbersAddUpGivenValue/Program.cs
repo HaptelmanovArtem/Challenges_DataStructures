@@ -75,7 +75,5 @@ static int Partition(int[] arr, int i, int j)
 
 static void Swap(int[] arr, int x, int y)
 {
-    var temp = arr[x];
-    arr[x] = arr[y];
-    arr[y] = temp;
+    (arr[x], arr[y]) = (arr[y], arr[x]);
 }
