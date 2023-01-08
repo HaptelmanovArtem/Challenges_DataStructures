@@ -2,18 +2,21 @@
 
 using Stack;
 
-var twoStack = new TwoStacks(5);
+var stack = new Stack<int>();
 
-twoStack.Push1(6);
-twoStack.Push1(3);
-twoStack.Push1(2);
+stack.Push(2);
+stack.Push(97);
+stack.Push(4);
+stack.Push(42);
+stack.Push(12);
+stack.Push(60);
+stack.Push(23);
 
-twoStack.Push2(4);
-twoStack.Push2(5);
+StackExtensions.EvaluatePostFix("921*-8-4+");
 
-twoStack.Pop1();
-twoStack.Pop1();
-twoStack.Pop1();
-twoStack.Pop1();
+while (stack.TryPop(out var i))
+{
+    Console.WriteLine(i);
+}
 
 return 1;
