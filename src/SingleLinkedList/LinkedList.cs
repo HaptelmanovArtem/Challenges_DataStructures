@@ -207,7 +207,7 @@ public class LinkedList
                     Value = node.Value,
                 };
                 currentNode = currentHead;
-                
+
                 continue;
             }
 
@@ -220,7 +220,7 @@ public class LinkedList
                     isDuplicateDetected = true;
                     break;
                 }
-                
+
                 tempNode = tempNode.NextNode;
             }
 
@@ -241,7 +241,7 @@ public class LinkedList
             Head = list.Head;
             return;
         }
-        
+
         var tail = Head;
 
         while (tail.NextNode is not null)
@@ -251,7 +251,7 @@ public class LinkedList
 
         tail.NextNode = list.Head;
     }
-    
+
     public void Intersect(LinkedList list)
     {
         if (IsEmpty())
@@ -259,9 +259,9 @@ public class LinkedList
             Head = list.Head;
             return;
         }
-        
+
         var currentNode = Head;
-        
+
         var intersectedHead = default(Node?);
         var intersectedCurrent = default(Node?);
 
@@ -282,10 +282,10 @@ public class LinkedList
                     intersectedCurrent.NextNode = new Node { Value = tempCurrentNode.Value };
                     intersectedCurrent = intersectedCurrent.NextNode;
                 }
-                
+
                 tempCurrentNode = tempCurrentNode.NextNode;
             }
-                
+
             currentNode = currentNode.NextNode;
         }
 
@@ -296,7 +296,7 @@ public class LinkedList
     {
         var currentCount = 1;
         var valueIndex = int.MinValue;
-        
+
         var temp = Head;
         while (temp is not null)
         {
@@ -304,40 +304,40 @@ public class LinkedList
             {
                 valueIndex = currentCount;
             }
-            
+
             temp = temp.NextNode;
             currentCount++;
         }
 
         if (valueIndex == Int32.MinValue)
             return -1;
-        
+
         return currentCount - valueIndex;
     }
-    
+
     public int FindByIndexFromHead(int index)
     {
         if (IsEmpty())
             return -1;
-        
+
         var currentCount = 1;
-        
+
         var temp = Head;
         while (currentCount < index)
         {
             if (temp is null)
                 return -1;
-            
+
             temp = temp.NextNode;
             currentCount++;
         }
 
         if (temp is null)
             return -1;
-        
+
         return temp.Value;
     }
-    
+
     public int FindByIndexFromTail(int index)
     {
         if (IsEmpty())
@@ -345,20 +345,20 @@ public class LinkedList
 
         var length = Length();
         var currentCount = 1;
-        
+
         var temp = Head;
         while (currentCount < (length - index + 1))
         {
             if (temp is null)
                 return -1;
-            
+
             temp = temp.NextNode;
             currentCount++;
         }
 
         if (temp is null)
             return -1;
-        
+
         return temp.Value;
     }
 }

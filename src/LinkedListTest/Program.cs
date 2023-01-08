@@ -25,15 +25,19 @@ Console.WriteLine(linkedList.Search(20));
 return 1;*/
 
 
-var linkedList = new LinkedList();
+var doubleLinkedList = new DoubleLinkedList();
 
-linkedList.InsertAtTail(1);
-linkedList.InsertAtTail(2);
-linkedList.InsertAtTail(3);
-linkedList.InsertAtTail(4);
-linkedList.InsertAtTail(5);
+doubleLinkedList.InsertAtTail(1);
+doubleLinkedList.InsertAtTail(2);
+doubleLinkedList.InsertAtTail(3);
+doubleLinkedList.InsertAtTail(4);
+doubleLinkedList.InsertAtTail(5);
 
-Console.WriteLine(linkedList.FindByIndexFromHead(4));
-Console.WriteLine(linkedList.FindByIndexFromTail(2));
+var temp = doubleLinkedList.Tail;
+while (temp != null)
+{
+    Console.Write(temp.Value + "->");
+    temp = temp.PreviousNode;
+}
 
 return 1;
