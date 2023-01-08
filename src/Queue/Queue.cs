@@ -64,4 +64,38 @@ public class Queue
 
         return result;
     }
+
+    /*
+        Implement the function Reverse, 
+        which takes a queue and a number k as input and reverses the first k elements of the queue.
+     */
+    public void Reverse(int size)
+    {
+        if (size < 0 || size >= GetSize())
+            throw new ArgumentOutOfRangeException(nameof(size));
+
+        if (size == 0)
+            return;
+
+        var stack = new Stack.Stack(size);
+
+        var temp = 0;
+        while (size > temp)
+        {
+            stack.Push(GetFront());
+            Dequeue();
+            temp++;
+        }
+
+        while (stack.GetSize() != 0)
+        {
+            Enqueue(stack.Pop());
+        }
+
+        for (int i = 0; i < GetSize() - size; i++)
+        {
+            Enqueue(GetFront());
+            Dequeue();
+        }
+    }
 }

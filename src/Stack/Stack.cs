@@ -15,9 +15,10 @@ public class Stack
 
     public void Push(int value)
     {
-        if (_capacity < _currentPosition)
+        if (_capacity > _currentPosition)
         {
             _arr[_currentPosition++] = value;
+            return;
         }
 
         throw new IndexOutOfRangeException();

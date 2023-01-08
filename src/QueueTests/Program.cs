@@ -2,6 +2,12 @@
 
 var queue = new Queue.Queue();
 
-var result = queue.FindBin(3);
+queue.Enqueue(1);
+queue.Enqueue(2);
+queue.Enqueue(3);
+queue.Enqueue(4);
+queue.Enqueue(5);
+
+queue.Reverse(3);
 
 return 1;
