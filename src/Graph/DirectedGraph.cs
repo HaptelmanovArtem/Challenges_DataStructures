@@ -1,4 +1,7 @@
-﻿namespace Graph;
+﻿using System.Data;
+using System.Text;
+
+namespace Graph;
 
 public class DirectedGraph
 {
@@ -18,7 +21,7 @@ public class DirectedGraph
     {
         if (vertex >= AdjacencyList.Length || toVertex >= AdjacencyList.Length)
             throw new InvalidOperationException();
-        
+
         AdjacencyList[vertex].AddFirst(toVertex);
     }
 
@@ -39,45 +42,72 @@ public class DirectedGraph
 
     public List<int> GetBreadthFirstSearch()
     {
-        var visitedVertices = new HashSet<int>();
-        
+        var stack = new Stack<int>();
+        var result = new List<int>();
+        var visitedMap = new bool[AdjacencyList.Length];
+
         for (var i = 0; i < AdjacencyList.Length; i++)
         {
-            visitedVertices.Add(i);
-
-            foreach (var adjacencyVertex in AdjacencyList[i])
+            if (!visitedMap[i])
             {
-                visitedVertices.Add(adjacencyVertex);
+                stack.Push(i);
+                visitedMap[i] = true;
+            }
+
+            while (stack.Count != 0)
+            {
+                var currentNode = stack.Pop();
+                result.Add(currentNode);
+                var temp = AdjacencyList[currentNode].First;
+                while (temp != null)
+                {
+                    if (visitedMap[temp.Value] != true)
+                    {
+                        stack.Push(temp.Value);
+                        visitedMap[temp.Value] = true;
+                    }
+
+                    temp = temp.Next;
+                }
             }
         }
 
-        return visitedVertices.ToList();
+        return result;
     }
-    
+
     public List<int> GetDepthFirstSearch()
     {
-        var result = new HashSet<int>();
+        var queue = new Queue<int>();
+        var result = new List<int>();
+        var visitedMap = new bool[AdjacencyList.Length];
 
-        void Traversal(LinkedList<int> vertices, int currentVertex, HashSet<int> accumulatedSet)
-        {
-            accumulatedSet.Add(currentVertex);
-
-            foreach (var vertex in vertices)
-            {
-                accumulatedSet.Add(vertex);
-                Traversal(AdjacencyList[vertex], vertex, accumulatedSet);
-            }
-        }
-        
         for (var i = 0; i < AdjacencyList.Length; i++)
         {
-            if(result.Contains(i))
-                continue;
-            
-            Traversal(AdjacencyList[i], i, result);
+            if (!visitedMap[i])
+            {
+                queue.Enqueue(i);
+                visitedMap[i] = true;
+            }
+
+            while (queue.Count != 0)
+            {
+                var currentNode = queue.Dequeue();
+                result.Add(currentNode);
+                var temp = AdjacencyList[currentNode].First;
+                while (temp != null)
+                {
+                    if (visitedMap[temp.Value] != true)
+                    {
+                        queue.Enqueue(temp.Value);
+                        visitedMap[temp.Value] = true;
+                    }
+
+                    temp = temp.Next;
+                }
+            }
         }
 
-        return result.ToList();
+        return result;
     }
 
     public bool IsContainsCycle()
@@ -88,9 +118,9 @@ public class DirectedGraph
 
             if (visitingMap.ContainsKey(currentVertex))
                 return true;
-                
+
             visitingMap.Add(currentVertex, true);
-            
+
             foreach (var vertex in vertices)
             {
                 if (DetectLoop(AdjacencyList[vertex], vertex, visitingMap))
@@ -99,7 +129,7 @@ public class DirectedGraph
 
             return false;
         }
-        
+
         for (var currentVertex = 0; currentVertex < AdjacencyList.Length; currentVertex++)
         {
             if (DetectLoop(AdjacencyList[currentVertex], currentVertex))
@@ -118,7 +148,7 @@ public class DirectedGraph
         void Traversal(LinkedList<int> vertices, int currentVertex, bool[] visited)
         {
             visited[currentVertex] = true;
-            
+
             foreach (var vertex in vertices)
             {
                 if (!visited[vertex])
@@ -128,7 +158,7 @@ public class DirectedGraph
 
         var visitedVertices = new bool[VerticesCount()];
         var lastVisitedVertex = -1;
-        
+
         for (var i = 0; i < VerticesCount(); i++)
         {
             if (!visitedVertices[i])
@@ -142,7 +172,7 @@ public class DirectedGraph
         {
             visitedVertices[i] = false;
         }
-        
+
         Traversal(AdjacencyList[lastVisitedVertex], lastVisitedVertex, visitedVertices);
 
         for (var i = 0; i < visitedVertices.Length; i++)
@@ -150,7 +180,146 @@ public class DirectedGraph
             if (visitedVertices[i] == false)
                 return -1;
         }
-        
+
         return lastVisitedVertex;
+    }
+
+    public int GetEdgesCountWithMatrix()
+    {
+        if (AdjacencyList.Length == 0)
+            return 0;
+
+        var pairs = new int[AdjacencyList.Length, AdjacencyList.Length];
+        var edges = 0;
+
+        for (var i = 0; i < AdjacencyList.Length; i++)
+        {
+            foreach (var vertices in AdjacencyList[i])
+            {
+                if (pairs[vertices, i] == 1)
+                    continue;
+
+                pairs[i, vertices] = 1;
+                edges++;
+            }
+        }
+
+        return edges;
+    }
+
+    public int GetEdgesCountForUndirected()
+    {
+        if (AdjacencyList.Length == 0)
+            return 0;
+
+        var edges = 0;
+
+        for (var i = 0; i < AdjacencyList.Length; i++)
+            edges += AdjacencyList[i].Count;
+
+        return edges / 2;
+    }
+
+    public bool CheckPath(int source, int destination)
+    {
+        if (source == destination)
+            return true;
+
+        bool Traversal(LinkedList<int> vertices, int destinationVertex)
+        {
+            foreach (var vertex in vertices)
+            {
+                if (vertex == destinationVertex)
+                    return true;
+
+                if (Traversal(AdjacencyList[vertex], destinationVertex))
+                    return true;
+            }
+
+            return false;
+        }
+
+        return Traversal(AdjacencyList[source], destination);
+    }
+
+    // https://www.educative.io/courses/data-structures-interviews-cs/qVDXOZ0pnzD
+    // A graph can only be a tree under two conditions:
+    // There are no cycles.
+    // The graph is connected.
+    public bool IsTree()
+    {
+        var visitedMap = new Dictionary<int, bool>();
+
+        for (var i = 0; i < VerticesCount(); i++)
+        {
+            visitedMap[i] = false;
+        }
+
+        bool DetectLoop(LinkedList<int> vertices, int currentVertex, Dictionary<int, bool> visitingMap)
+        {
+            if (visitingMap.ContainsKey(currentVertex))
+                return true;
+
+            visitingMap[currentVertex] = true;
+
+            foreach (var vertex in vertices)
+            {
+                if (DetectLoop(AdjacencyList[vertex], vertex, visitingMap))
+                    return true;
+            }
+
+            return false;
+        }
+
+        if (DetectLoop(AdjacencyList[0], 0, visitedMap))
+            return false;
+
+        if (visitedMap.Any(i => i.Value == false))
+            return false;
+
+        return true;
+    }
+
+    public int FindShortestPath(int source, int destination)
+    {
+        if (source == destination)
+            return 0;
+
+        var queue = new Queue<int>();
+        var visitedMap = new bool[AdjacencyList.Length];
+        var distanceMap = new int[AdjacencyList.Length];
+
+        if (!visitedMap[source])
+        {
+            queue.Enqueue(source);
+            visitedMap[source] = true;
+        }
+
+        while (queue.Count != 0)
+        {
+            var currentNode = queue.Dequeue();
+            var temp = AdjacencyList[currentNode].First;
+            while (temp != null)
+            {
+                if (!visitedMap[temp.Value])
+                {
+                    queue.Enqueue(temp.Value);
+                    visitedMap[temp.Value] = true;
+                    distanceMap[temp.Value] = distanceMap[currentNode] + 1;
+                }
+
+                if (temp.Value == destination)
+                    return distanceMap[temp.Value];
+
+                temp = temp.Next;
+            }
+        }
+
+        return -1;
+    }
+
+    public void RemoveEdge(int source, int destination)
+    { 
+        AdjacencyList[source].Remove(destination);
     }
 }

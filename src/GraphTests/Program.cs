@@ -5,13 +5,14 @@ using Graph;
 var g = new DirectedGraph(4);
 
 g.AddEdge(0, 1);
-g.AddEdge(1, 2);
-g.AddEdge(3, 0);
-g.AddEdge(3, 1);
+g.AddEdge(0, 2);
+g.AddEdge(0, 3);
+g.AddEdge(2, 3);
+
 
 g.Print();
 
-var _ = g.GetMotherVertex();
+var _ = g.FindShortestPath(0, 3);
 
 
 return 0;
